@@ -11,10 +11,10 @@ from-scratch LSTM. Trained on the
 ## Architecture
 
 ```
-Frame sequence (T frames)
+Frame sequence 
         │
         ▼
-ResNet18 backbone (pretrained on ImageNet, frozen)
+ResNet18 backbone (pretrained on ImageNet)
         │  per-frame feature vectors
         ▼
 LSTM (1 layer, trained from scratch)
@@ -43,7 +43,7 @@ regresses the final steering angle from the LSTM's last hidden state.
 ├── dataset.py               # Builds sliding-window frame sequences from the CSV
 ├── model.py                 # CNNEncoder (ResNet18/MobileNetV2) + LSTM + regression head
 ├── train.py                 # Training loop: metrics, early stopping, loss curve plot
-├── metrics.py                # MAE / RMSE (degrees) + straight-vs-turn error breakdown
+├── metrics.py                # MAE / RMSE (degrees) 
 ├── visualize.py              # Draws the predicted (and ground-truth) angle on frames/video
 ├── loss_curve.png            # Train/val loss over epochs from the most recent run
 └── requirements.txt
@@ -87,9 +87,6 @@ Convert it into the CSV format `dataset.py` expects
 python convert_txt_to_csv.py --txt data.txt --out driving_log.csv
 ```
 
-Malformed lines (wrong number of fields, non-numeric angle) are skipped
-with a warning rather than stopping the conversion; the script reports how
-many rows were written vs. skipped when it finishes.
 
 ### 3. Expected CSV format
 
@@ -107,12 +104,6 @@ different column names, edit `IMAGE_COL` / `ANGLE_COL` at the top of
 Train/val splitting (`make_train_val_split` in `dataset.py`) is done **by
 time**, not randomly — random shuffling would leak near-duplicate adjacent
 frames across both splits and produce a misleadingly low validation loss.
-
-> **Angle units:** this dataset (`phamvoquoclong/steering-dataset`) stores
-> `steering_angle` in **degrees** (e.g. `-66.25`), which is why
-> `metrics.py` sets `RAD_TO_DEG = 1.0`. If you swap in a dataset that
-> stores radians instead, update that constant.
-
 ---
 
 ## Training
